@@ -51,10 +51,25 @@ def endpoints(request):
 )
 @api_view(["GET"])
 def suggestions(request):
+    """
+    Suggestions
+    Parameters q(String), longitude(Float / Decimal / None), latitude (Float / Decimal / None)
+    """
     q = request.query_params.get('q', None)
-    longitude = float(request.query_params.get('longitude', 0))
-    latitude = float(request.query_params.get('latitude', 0))
-    suggestions = getCity.getCity(q, longitude, latitude)
+    longitude = request.query_params.get('longitude', 0)
+    latitude = request.query_params.get('latitude', 0)
+    try:
+        longitude = float(longitude)
+        latitude = float(latitude)
+        suggestions = getCity.getCity(q, longitude, latitude)
+    except ValueError:
+        return Response({"ValueError": {
+            "value(dataType)": {
+                f"{q}({type(q)})": "Expected String",
+                f"{longitude}({type(longitude)})": "Expected None / Number / Decimal / Float",
+                f"{latitude}({type(latitude)})": "Expected None / Number / Decimal / Float"
+            }
+        }})
     
     data = {
             "suggestions": suggestions
