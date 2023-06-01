@@ -5,6 +5,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', views.endpoints),
+    path('/', views.endpoints),
     path('suggestions', views.suggestions),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

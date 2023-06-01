@@ -4,20 +4,10 @@ from rest_framework import serializers
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from .util import getCity
-import json
 
 # Create your views here.
 @swagger_auto_schema(
-    method='get', 
-    manual_parameters=[
-        openapi.Parameter(
-            name='query_param',
-            in_=openapi.IN_QUERY,
-            type=openapi.TYPE_STRING,
-            description='A query parameter',
-            required=True,
-        ),
-    ],
+    method='get',
     responses={200: 'OK'}
 )
 @api_view(["GET"])
@@ -28,25 +18,43 @@ def endpoints(request):
     data = {
         "suggestions": "/suggestions",
         "swagger documentation": "/swagger",
-        "redoc deocumentation": "/redoc"
+        "redoc documentation": "/redoc"
     }
     return Response(data)
     
-
-@api_view(["GET","POST"])
+@swagger_auto_schema(
+    method='get', 
+    manual_parameters=[
+        openapi.Parameter(
+            name='query',
+            in_=openapi.IN_QUERY,
+            type=openapi.TYPE_STRING,
+            description='City',
+            required=True,
+        ),
+        openapi.Parameter(
+            name='longitude',
+            in_=openapi.IN_QUERY,
+            type=openapi.TYPE_NUMBER,
+            format=openapi.FORMAT_FLOAT,
+            description='longitude',
+        ),
+        openapi.Parameter(
+            name='latitude',
+            in_=openapi.IN_QUERY,
+            type=openapi.TYPE_NUMBER,
+            format=openapi.FORMAT_FLOAT,
+            description='latitude',
+        ),
+    ],
+    responses={200: 'OK'}
+)
+@api_view(["GET"])
 def suggestions(request):
-
-    if request.method == "GET":
-        q = request.query_params.get('q', None)
-        longitude = float(request.query_params.get('longitude', 0))
-        latitude = float(request.query_params.get('latitude', 0))
-        suggestions = getCity.getCity(q, longitude, latitude)
-    else:
-        r = request.data
-        q = r.get('q', None)
-        longitude = float(r.get('longitude', 0))
-        latitude = float(r.get('latitude', 0))
-        suggestions = getCity.getCity(q, longitude, latitude)
+    q = request.query_params.get('q', None)
+    longitude = float(request.query_params.get('longitude', 0))
+    latitude = float(request.query_params.get('latitude', 0))
+    suggestions = getCity.getCity(q, longitude, latitude)
     
     data = {
             "suggestions": suggestions

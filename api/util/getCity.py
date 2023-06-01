@@ -1,5 +1,6 @@
 from fuzzywuzzy import fuzz
-import math, json, os
+import math, os
+
 # To get the city and it's details - getCity does the job
 
 def getCity(query, longitude=None, latitude=None):
@@ -51,4 +52,10 @@ def getScore(query, city_name, city_latitude, city_longitude, caller_latitude, c
         proximity = proximityScore(city_latitude, city_longitude, caller_latitude, caller_longitude)
     else:
         return relevance
-    return (relevance + proximity)/2
+    
+    # overall_score = (relevance + proximity) / 2
+
+    relevance_weight = 7.5
+    proximity_weight = 2.5
+    overall_score = (relevance_weight * relevance + proximity_weight * proximity) / (relevance_weight + proximity_weight)
+    return round(overall_score, 2)
