@@ -61,7 +61,10 @@ def suggestions(request):
     try:
         longitude = float(longitude)
         latitude = float(latitude)
-        suggestions = getCity.getCity(q, longitude, latitude)
+        if q is not None:
+            suggestions = getCity.getCity(q, longitude, latitude)
+        else:
+            suggestions = []
     except ValueError:
         return Response({"ValueError": {
             "value(dataType)": {
